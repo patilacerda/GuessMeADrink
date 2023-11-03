@@ -1,6 +1,7 @@
 import gspread
 from google.oauth2.service_account import Credentials
 from datetime import datetime
+import random
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -12,6 +13,7 @@ CREDS = Credentials.from_service_account_file('creds.json')
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('cocktail_recipes')
+RECIPES = SHEET.worksheet('recipes')
 
 menu_art = """
 
@@ -47,6 +49,19 @@ def calculate_age(birth_date):
     return age
 
 
+def select_random_cocktail():
+    """
+    Randomly select a row and column (cocktail) from the worksheet
+    Starting from the second row and second column
+    """
+    while True:
+        random_row = random.randint(2, RECIPES.row_count)
+        random_column = random.randint(2, len(spirit_categories) + 1)
+        cocktail = RECIPES.cell(random_row, random_column).value
+        if cocktail:
+            return cocktail
+
+
 print("Welcome to Guess me a drink")
 print(menu_art)
 
@@ -68,3 +83,40 @@ if user_age < 18:
     print("You can drink a soda buddy ^-^")
 else:
     print("Let's get started!")
+    # Get the spirit category from the first row of the sheet
+    spirit_categories = SHEET.sheet1.row_values(1)[1:]
+
+    # Add "Random" as an option to select a random drink
+    spirit_categories.append("I'm feeling lucky")
+
+    while True:
+        print("Choose a spirit category:")
+        for i, category in enumerate(spirit_categories, start=1):
+            # Main menu
+            print(f"{i}. {category}")
+
+        try:
+            user_choice = int(input(
+                "Enter the number of your chosen spirit category: "))
+            if 1 <= user_choice <= len(spirit_categories):
+                selected_category = spirit_categories[user_choice - 1]
+
+                if selected_category == "I'm feeling lucky":
+                    # Select a random cocktail
+                    random_cocktail = select_random_cocktail()
+                    print(f"Randomly selected cocktail: {random_cocktail}")
+                else:
+                    # Get the available flavors
+                    spirit_row = RECIPES.row_values(1)
+                    spirit_index = spirit_row.index(selected_category)
+                    flavors = RECIPES.col_values(1)
+                    flavors = flavors[1:]  # Skip the header
+                    print("Choose a flavor:")
+                    for i, flavor in enumerate(flavors, start=1):
+                        print(f"{i}. {flavor}")
+                break
+            else:
+                print("""Invalid selection. Please choose a valid spirit
+                    category.""")
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")

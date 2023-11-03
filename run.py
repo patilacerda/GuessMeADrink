@@ -1,64 +1,17 @@
+import gspread
+from google.oauth2.service_account import Credentials
 from datetime import datetime
 
-# Define drink recipes using dictionaries
-drink_recipes = {
-    'gin': {
-        'citric': 'Gin and Tonic',
-        'berry': 'Bramble',
-        'sour': 'Gimlet',
-        'spicy': 'Negroni',
-        'herbal': 'Martini',
-        'sweet': 'Tom Collins',
-        'dry': 'Martini',
-        'creamy': 'Ramos Gin Fizz',
-        'fizzy': 'Gin Fizz'
-    },
-    'vodka': {
-        'citric': 'Screwdriver',
-        'berry': 'Cosmopolitan',
-        'sour': 'Lemon Drop',
-        'spicy': 'Bloody Mary',
-        'herbal': 'Moscow Mule',
-        'sweet': 'Sex on the Beach',
-        'dry': 'Vodka Martini',
-        'creamy': 'White Russian',
-        'fizzy': 'Vodka Soda'
-    },
-    'whisky': {
-        'citric': 'Whiskey Sour',
-        'berry': 'Blackberry Whiskey Smash',
-        'sour': 'Sazerac',
-        'spicy': 'Hot Toddy',
-        'herbal': 'Mint Julep',
-        'sweet': 'Boulevardier',
-        'dry': 'Manhattan',
-        'creamy': 'Whiskey Cream Soda',
-        'fizzy': 'Whiskey Highball'
-    },
-    'rum': {
-        'citric': 'Daiquiri',
-        'berry': 'Mai Tai',
-        'sour': 'Zombie',
-        'spicy': 'Rum Punch',
-        'herbal': 'Rum Swizzle',
-        'sweet': 'Pina Colada',
-        'dry': 'El Presidente',
-        'creamy': 'Coquito',
-        'fizzy': 'Rum and Coke'
-    },
-    'tequila': {
-        'citric': 'Margarita',
-        'berry': 'Tequila Sunrise',
-        'sour': 'Paloma',
-        'spicy': 'Bloody Maria',
-        'herbal': 'Agave Old Fashioned',
-        'sweet': 'Tequila Mockingbird',
-        'dry': 'Tequila Gimlet',
-        'creamy': 'Batanga',
-        'fizzy': 'Tequila Soda'
-    },
-    'I\'m feeling lucky': None
-}
+SCOPE = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
+    "https://www.googleapis.com/auth/drive"
+    ]
+
+CREDS = Credentials.from_service_account_file('creds.json')
+SCOPED_CREDS = CREDS.with_scopes(SCOPE)
+GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
+SHEET = GSPREAD_CLIENT.open('cocktail_recipes')
 
 menu_art = """
 
@@ -98,12 +51,12 @@ print("Welcome to Guess me a drink")
 print(menu_art)
 
 # Wait for the user to press Enter
-while input("Press Enter to start...") != "":
+while input("Press Enter to start...\n") != "":
     pass
 
 # Verify the age of the user
 while True:
-    user_age_str = input("Please enter your date of birth (dd/mm/yyyy): ")
+    user_age_str = input("Please enter your date of birth (dd/mm/yyyy): \n")
     try:
         user_age_date = datetime.strptime(user_age_str, "%d/%m/%Y")
         user_age = calculate_age(user_age_date)

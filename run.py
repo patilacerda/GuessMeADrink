@@ -111,10 +111,33 @@ else:
                     spirit_index = spirit_row.index(selected_category)
                     flavors = RECIPES.col_values(1)
                     flavors = flavors[1:]  # Skip the header
+                    # Show the flavor options to the user
                     print("Choose a flavor:")
                     for i, flavor in enumerate(flavors, start=1):
                         print(f"{i}. {flavor}")
-                break
+                    user_flavor_choice = int(input(
+                        "Enter the number of your chosen flavor: "))
+                    if 1 <= user_flavor_choice <= len(flavors):
+                        selected_flavor = flavors[user_flavor_choice - 1]
+
+                        # Find the row index of the selected spirit
+                        spirit_index = spirit_categories.index(
+                            selected_category)
+
+                        # Retrieve the recipe
+                        recipe = RECIPES.cell(
+                            user_flavor_choice + 1, spirit_index + 2).value
+
+                        print(f"""You selected a
+                        {selected_category} - {selected_flavor} cocktail.""")
+                        print("Here's your recipe:")
+                        print(recipe)
+
+                        # Add a break statement to exit the loop
+                        break
+                    else:
+                        print("""Invalid flavor selection.
+                        Please choose a valid flavor.""")
             else:
                 print("""Invalid selection. Please choose a valid spirit
                     category.""")

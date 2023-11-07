@@ -105,6 +105,15 @@ else:
                     # Select a random cocktail
                     random_cocktail = select_random_cocktail()
                     print(f"Randomly selected cocktail: {random_cocktail}")
+                    user_flavor_choice = input("""
+                    Do you want to try another cocktail? (Y/N):
+                    """).strip().upper()
+                    if user_flavor_choice != "Y":
+                        print("""
+                        Enjoy your drinks wisely,
+                        and don't forget to stay hydrated!
+                        """)
+                        break
                 else:
                     # Get the available flavors
                     spirit_row = RECIPES.row_values(1)
@@ -124,17 +133,22 @@ else:
                         spirit_index = spirit_categories.index(
                             selected_category)
 
-                        # Retrieve the recipe
+                        # Return the recipe
                         recipe = RECIPES.cell(
                             user_flavor_choice + 1, spirit_index + 2).value
 
                         print(f"""You selected a
                         {selected_category} - {selected_flavor} cocktail.""")
-                        print("Here's your recipe:")
-                        print(recipe)
-
-                        # Add a break statement to exit the loop
-                        break
+                        print(f"Here's your recipe:\n{recipe}")
+                        user_flavor_choice = input("""
+                        Do you want to try another cocktail? (Y/N):
+                        """).strip().upper()
+                        if user_flavor_choice != "Y":
+                            print("""
+                            Enjoy your drinks wisely,
+                            and don't forget to stay hydrated!
+                            """)
+                            break
                     else:
                         print("""Invalid flavor selection.
                         Please choose a valid flavor.""")

@@ -2,6 +2,7 @@ import gspread
 from google.oauth2.service_account import Credentials
 from datetime import datetime
 import random
+from colorama import Fore, Back, Style
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -15,7 +16,7 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('cocktail_recipes')
 RECIPES = SHEET.worksheet('recipes')
 
-menu_art = """
+menu_art = '\033[34m' + """
 
                     ████████████████████████████████████
                     ██░░░░░░██░░░░░░░░░░░░░░░░░░░░░░░░██
@@ -36,13 +37,11 @@ menu_art = """
                                   ████████
                                 ████████████
                             ▓▓▓▓████████████▓▓██
-"""
+""" + '\033[39m'
 
 
 def calculate_age(birth_date):
-    """
-    Calculate the age based on the birth date.
-    """
+    # Calculate the age based on the birth date.
     today = datetime.today()
     age = today.year - birth_date.year - (
             (today.month, today.day) < (birth_date.month, birth_date.day))
@@ -50,10 +49,7 @@ def calculate_age(birth_date):
 
 
 def select_random_cocktail():
-    """
-    Randomly select a row and column (cocktail) from the worksheet
-    Starting from the second row and second column
-    """
+    # Randomly select a row and column (cocktail) from the worksheet
     while True:
         random_row = random.randint(2, RECIPES.row_count)
         random_column = random.randint(2, len(spirit_categories) + 1)
@@ -62,7 +58,7 @@ def select_random_cocktail():
             return cocktail
 
 
-print("Welcome to Guess me a drink")
+print("Welcome to" + '\033[33m' + " Guess me a drink" + '\033[39m' + "!")
 print(menu_art)
 
 # Wait for the user to press Enter
@@ -77,7 +73,9 @@ while True:
         user_age = calculate_age(user_age_date)
         break
     except ValueError:
-        print("Invalid date format. Please use the format dd/mm/yyyy.")
+        print('\033[31m' + """
+        Invalid date format. Please use the format dd/mm/yyyy.
+        """ + '\033[39m')
 
 if user_age < 18:
     print("You can drink a soda buddy ^-^")
@@ -90,14 +88,14 @@ else:
     spirit_categories.append("I'm feeling lucky")
 
     while True:
-        print("Choose a spirit category:")
+        print('\033[33m' + "Choose a spirit category: " + '\033[39m')
         for i, category in enumerate(spirit_categories, start=1):
             # Main menu
             print(f"{i}. {category}")
 
         try:
             user_choice = int(input(
-                "Enter the number of your chosen spirit category: "))
+                "Enter the number of your chosen spirit category: \n"))
             if 1 <= user_choice <= len(spirit_categories):
                 selected_category = spirit_categories[user_choice - 1]
 
@@ -106,7 +104,7 @@ else:
                     random_cocktail = select_random_cocktail()
                     print(f"Randomly selected cocktail: {random_cocktail}")
                     user_flavor_choice = input("""
-                    Do you want to try another cocktail? (Y/N):
+                    Do you want to try another cocktail? (Y/N):\n
                     """).strip().upper()
                     if user_flavor_choice != "Y":
                         print("""
@@ -121,11 +119,11 @@ else:
                     flavors = RECIPES.col_values(1)
                     flavors = flavors[1:]  # Skip the header
                     # Show the flavor options to the user
-                    print("Choose a flavor:")
+                    print('\033[33m' + "Choose a flavor:" + '\033[39m')
                     for i, flavor in enumerate(flavors, start=1):
                         print(f"{i}. {flavor}")
                     user_flavor_choice = int(input(
-                        "Enter the number of your chosen flavor: "))
+                        "Enter the number of your chosen flavor: \n"))
                     if 1 <= user_flavor_choice <= len(flavors):
                         selected_flavor = flavors[user_flavor_choice - 1]
 
@@ -137,23 +135,28 @@ else:
                         recipe = RECIPES.cell(
                             user_flavor_choice + 1, spirit_index + 2).value
 
-                        print(f"""You selected a
+                        print("You selected a: " + '\033[33m' + f"""
                         {selected_category} - {selected_flavor} cocktail.""")
+                        print('\033[39m')
                         print(f"Here's your recipe:\n{recipe}")
                         user_flavor_choice = input("""
-                        Do you want to try another cocktail? (Y/N):
+                        Do you want to try another cocktail? (Y/N): \n
                         """).strip().upper()
                         if user_flavor_choice != "Y":
-                            print("""
+                            print('\033[33m' + """
                             Enjoy your drinks wisely,
                             and don't forget to stay hydrated!
-                            """)
+                            """ + '\033[39m')
                             break
                     else:
-                        print("""Invalid flavor selection.
-                        Please choose a valid flavor.""")
+                        print('\033[31m' + """
+                        Invalid flavor selection. Please choose a valid flavor.
+                        """ + '\033[39m')
             else:
-                print("""Invalid selection. Please choose a valid spirit
-                    category.""")
+                print('\033[31m' + """
+                Invalid selection. Please choose a valid spirit category.
+                """ + '\033[39m')
         except ValueError:
-            print("Invalid input. Please enter a valid number.")
+            print('\033[31m' + """
+            Invalid input. Please enter a valid number.
+            """ + '\033[39m')

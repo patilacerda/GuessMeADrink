@@ -3,6 +3,7 @@ from google.oauth2.service_account import Credentials
 from datetime import datetime
 import random
 from colorama import Fore, Back, Style
+import os
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -62,8 +63,10 @@ print("Welcome to" + '\033[33m' + " Guess me a drink" + '\033[39m' + "!")
 print(menu_art)
 
 # Wait for the user to press Enter
-while input("Press Enter to start...\n") != "":
-    pass
+input("Press Enter to start...")
+
+# Clear the terminal
+os.system("clear" if os.name == "posix" else "cls")
 
 # Verify the age of the user
 while True:
@@ -106,12 +109,16 @@ else:
                     user_flavor_choice = input("""
                     Do you want to try another cocktail? (Y/N):\n
                     """).strip().upper()
-                    if user_flavor_choice != "Y":
-                        print("""
+                    if user_flavor_choice == "N":
+                        print('\033[33m' + """
                         Enjoy your drinks wisely,
                         and don't forget to stay hydrated!
-                        """)
+                        """ + '\033[39m')
                         break
+                    elif user_flavor_choice != "Y":
+                        print('\033[31m' + """
+                        Invalid input. Please enter 'Y' or 'N'.
+                        """ + '\033[39m')
                 else:
                     # Get the available flavors
                     spirit_row = RECIPES.row_values(1)
@@ -142,12 +149,16 @@ else:
                         user_flavor_choice = input("""
                         Do you want to try another cocktail? (Y/N): \n
                         """).strip().upper()
-                        if user_flavor_choice != "Y":
+                        if user_flavor_choice == "N":
                             print('\033[33m' + """
                             Enjoy your drinks wisely,
                             and don't forget to stay hydrated!
                             """ + '\033[39m')
                             break
+                        elif user_flavor_choice != "Y":
+                            print('\033[31m' + """
+                            Invalid input. Please enter 'Y' or 'N'.
+                            """ + '\033[39m')
                     else:
                         print('\033[31m' + """
                         Invalid flavor selection. Please choose a valid flavor.

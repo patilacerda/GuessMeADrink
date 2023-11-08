@@ -4,6 +4,7 @@ from datetime import datetime
 import random
 from colorama import Fore, Back, Style
 import os
+import sys
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -59,6 +60,26 @@ def select_random_cocktail():
             return cocktail
 
 
+def user_continue():
+    while True:
+        user_flavor_choice = input("""
+        Do you want to try another cocktail? (y/n):\n
+        """).strip()
+        if user_flavor_choice == "n":
+            print('\033[33m' + """
+            Enjoy your drinks wisely,
+            and don't forget to stay hydrated!
+            """ + '\033[39m')
+            sys.exit()
+
+        elif user_flavor_choice == "y":
+            return True
+        else:
+            print('\033[31m' + """
+            Invalid input. Please enter 'Y' or 'N'.
+            """ + '\033[39m')
+
+
 print("Welcome to" + '\033[33m' + " Guess me a drink" + '\033[39m' + "!")
 print(menu_art)
 
@@ -106,63 +127,56 @@ else:
                     # Select a random cocktail
                     random_cocktail = select_random_cocktail()
                     print(f"Randomly selected cocktail: {random_cocktail}")
-                    user_flavor_choice = input("""
-                    Do you want to try another cocktail? (Y/N):\n
-                    """).strip().upper()
-                    if user_flavor_choice == "N":
-                        print('\033[33m' + """
-                        Enjoy your drinks wisely,
-                        and don't forget to stay hydrated!
-                        """ + '\033[39m')
+                    if not user_continue():
                         break
-                    elif user_flavor_choice != "Y":
-                        print('\033[31m' + """
-                        Invalid input. Please enter 'Y' or 'N'.
-                        """ + '\033[39m')
+
                 else:
                     # Get the available flavors
                     spirit_row = RECIPES.row_values(1)
                     spirit_index = spirit_row.index(selected_category)
                     flavors = RECIPES.col_values(1)
                     flavors = flavors[1:]  # Skip the header
-                    # Show the flavor options to the user
-                    print('\033[33m' + "Choose a flavor:" + '\033[39m')
-                    for i, flavor in enumerate(flavors, start=1):
-                        print(f"{i}. {flavor}")
-                    user_flavor_choice = int(input(
-                        "Enter the number of your chosen flavor: \n"))
-                    if 1 <= user_flavor_choice <= len(flavors):
-                        selected_flavor = flavors[user_flavor_choice - 1]
+                    return_to_menu = False
 
-                        # Find the row index of the selected spirit
-                        spirit_index = spirit_categories.index(
-                            selected_category)
+                    while not return_to_menu:
+                        # Show the flavor options to the user
+                        print('\033[33m' + "Choose a flavor:" + '\033[39m')
+                        for i, flavor in enumerate(flavors, start=1):
+                            print(f"{i}. {flavor}")
+                        try:
+                            user_flavor_choice = int(input(
+                                "Enter the number of your chosen flavor: \n"))
+                            if 1 <= user_flavor_choice <= len(flavors):
+                                selected_flavor = flavors[
+                                    user_flavor_choice - 1]
 
-                        # Return the recipe
-                        recipe = RECIPES.cell(
-                            user_flavor_choice + 1, spirit_index + 2).value
+                                # Find the row index of the selected spirit
+                                spirit_index = spirit_categories.index(
+                                    selected_category)
 
-                        print("You selected a: " + '\033[33m' + f"""
-                        {selected_category} - {selected_flavor} cocktail.""")
-                        print('\033[39m')
-                        print(f"Here's your recipe:\n{recipe}")
-                        user_flavor_choice = input("""
-                        Do you want to try another cocktail? (Y/N): \n
-                        """).strip().upper()
-                        if user_flavor_choice == "N":
-                            print('\033[33m' + """
-                            Enjoy your drinks wisely,
-                            and don't forget to stay hydrated!
-                            """ + '\033[39m')
-                            break
-                        elif user_flavor_choice != "Y":
+                                # Return the recipe
+                                recipe = RECIPES.cell(
+                                    user_flavor_choice + 1,
+                                    spirit_index + 2).value
+
+                                print("You selected: " + '\033[33m' + f"""
+                                {selected_category} - {selected_flavor}
+                                """)
+                                print('\033[39m')
+                                print(f"Here's your recipe:\n{recipe}")
+                                if not user_continue():
+                                    break  # Exit the flavor selection loop
+                                else:
+                                    return_to_menu = True
+                            else:
+                                print('\033[31m' + """
+                                Invalid selection.
+                                Please choose a valid flavor.
+                                """ + '\033[39m')
+                        except ValueError:
                             print('\033[31m' + """
-                            Invalid input. Please enter 'Y' or 'N'.
+                            Invalid input. Please enter a valid number.
                             """ + '\033[39m')
-                    else:
-                        print('\033[31m' + """
-                        Invalid flavor selection. Please choose a valid flavor.
-                        """ + '\033[39m')
             else:
                 print('\033[31m' + """
                 Invalid selection. Please choose a valid spirit category.

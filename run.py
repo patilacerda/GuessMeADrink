@@ -18,7 +18,7 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('cocktail_recipes')
 RECIPES = SHEET.worksheet('recipes')
 
-menu_art = '\033[34m' + """
+menu_art = '\033[36m' + """
 
                     ████████████████████████████████████
                     ██░░░░░░██░░░░░░░░░░░░░░░░░░░░░░░░██
@@ -26,10 +26,10 @@ menu_art = '\033[34m' + """
                         ██      ██                ██
                           ██      ░░░░          ██
                             ██    ░░██        ██
-                              ██      ██    ██
+Welcome to                    ██      ██    ██
                                 ██        ██
                                   ██    ██
-                                    ████
+         Guess me a drink           ████
                                     ████
                                     ████
                                     ████
@@ -62,13 +62,14 @@ def select_random_cocktail():
 
 def user_continue():
     while True:
-        user_flavor_choice = input("""
+        user_flavor_choice = input('\033[33m' + """
         Do you want to try another cocktail? (y/n):\n
-        """).strip()
+        """ + '\033[39m').strip()
         if user_flavor_choice == "n":
             print('\033[33m' + """
+        Thanks for using Guess me a drink!
             Enjoy your drinks wisely,
-            and don't forget to stay hydrated!
+        and don't forget to stay hydrated:)
             """ + '\033[39m')
             sys.exit()
 
@@ -80,7 +81,6 @@ def user_continue():
             """ + '\033[39m')
 
 
-print("Welcome to" + '\033[33m' + " Guess me a drink" + '\033[39m' + "!")
 print(menu_art)
 
 # Wait for the user to press Enter
@@ -102,7 +102,25 @@ while True:
         """ + '\033[39m')
 
 if user_age < 18:
-    print("You can drink a soda buddy ^-^")
+    underage = 18 - user_age
+    print(f"""
+            For now, you can have a soda.""" + '\033[36m' + """
+
+                                   ██
+                                 ██  ██ 
+                      ░░░░░░░░ ██
+                   ░░░░░░░░░░██░░
+                █████████████████████
+                ███               ███
+                   ███████████████
+                   ███         ███
+                   ███ U  w  U ███
+                   ███         ███
+                   ███         ███
+                   █████░░░░░█████
+                     ███████████""" + '\033[39m' + f"""
+
+        Come back in {underage} years and try again!""")
 else:
     print("Let's get started!")
     # Get the spirit category from the first row of the sheet
@@ -126,7 +144,7 @@ else:
                 if selected_category == "I'm feeling lucky":
                     # Select a random cocktail
                     random_cocktail = select_random_cocktail()
-                    print(f"Randomly selected cocktail: {random_cocktail}")
+                    print(f"Here's your lucky cocktail: {random_cocktail}")
                     if not user_continue():
                         break
 

@@ -17,6 +17,7 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('cocktail_recipes')
 RECIPES = SHEET.worksheet('recipes')
+recipe_list = RECIPES.get_all_records()
 
 menu_art = '\033[36m' + """
 
@@ -51,25 +52,23 @@ def calculate_age(birth_date):
 
 
 def select_random_cocktail():
-    # Randomly select a row and column (cocktail) from the worksheet
-    while True:
-        random_row = random.randint(2, RECIPES.row_count)
-        random_column = random.randint(2, len(spirit_categories) + 1)
-        cocktail = RECIPES.cell(random_row, random_column).value
-        if cocktail:
-            return cocktail
+    # Randomly select a row and column (cocktail) from recipe_list
+    random_row = random.randint(2, len(recipe_list))
+    random_column = random.randint(2, len(spirit_categories))
+    cocktail = RECIPES.cell(random_row, random_column).value
+    return cocktail
 
 
 def user_continue():
     while True:
         user_flavor_choice = input('\033[33m' + """
-        Do you want to try another cocktail? (y/n):\n
+                Do you want to try another cocktail? (y/n):\n
         """ + '\033[39m').strip()
         if user_flavor_choice == "n":
-            print('\033[33m' + """
-        Thanks for using Guess me a drink!
-            Enjoy your drinks wisely,
-        and don't forget to stay hydrated:)
+            print('\033[36m' + """
+                    Thanks for using Guess me a drink!
+                        Enjoy your drinks wisely,
+                    and don't forget to stay hydrated:)
             """ + '\033[39m')
             sys.exit()
 
@@ -77,7 +76,7 @@ def user_continue():
             return True
         else:
             print('\033[31m' + """
-            Invalid input. Please enter 'Y' or 'N'.
+                Invalid input. Please enter 'y' or 'n'.
             """ + '\033[39m')
 
 
@@ -98,27 +97,28 @@ while True:
         break
     except ValueError:
         print('\033[31m' + """
-        Invalid date format. Please use the format dd/mm/yyyy.
+            Invalid date format. Please use the format dd/mm/yyyy.
         """ + '\033[39m')
 
 if user_age < 18:
     underage = 18 - user_age
     print(f"""
-            For now, you can have a soda.""" + '\033[36m' + """
-
-                                   ██
-                                 ██  ██ 
-                      ░░░░░░░░ ██
-                   ░░░░░░░░░░██░░
-                █████████████████████
-                ███               ███
-                   ███████████████
-                   ███         ███
-                   ███ U  w  U ███
-                   ███         ███
-                   ███         ███
-                   █████░░░░░█████
-                     ███████████""" + '\033[39m' + f"""
+                For now, you can have a soda.""" + '\033[36m' + """
+    
+                                       ██
+                                     ██  ██
+                          ░░░░░░░░ ██
+                       ░░░░░░░░░░██░░
+                    █████████████████████
+                    ███               ███
+                       ███████████████
+                       ███         ███
+                       ███         ███
+                       ███ U  w  U ███
+                       ███ ░░   ░░ ███
+                       ███         ███
+                       █████░░░░░█████
+                         ███████████""" + '\033[39m' + f"""
 
         Come back in {underage} years and try again!""")
 else:
@@ -188,12 +188,11 @@ else:
                                     return_to_menu = True
                             else:
                                 print('\033[31m' + """
-                                Invalid selection.
-                                Please choose a valid flavor.
+                    Invalid selection. Please choose a valid flavor.
                                 """ + '\033[39m')
                         except ValueError:
                             print('\033[31m' + """
-                            Invalid input. Please enter a valid number.
+                        Invalid input. Please enter a valid number.
                             """ + '\033[39m')
             else:
                 print('\033[31m' + """
@@ -201,5 +200,5 @@ else:
                 """ + '\033[39m')
         except ValueError:
             print('\033[31m' + """
-            Invalid input. Please enter a valid number.
+                        Invalid input. Please enter a valid number.
             """ + '\033[39m')

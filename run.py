@@ -104,7 +104,7 @@ if user_age < 18:
     underage = 18 - user_age
     print(f"""
                 For now, you can have a soda.""" + '\033[36m' + """
-    
+
                                        ██
                                      ██  ██
                           ░░░░░░░░ ██
@@ -120,7 +120,7 @@ if user_age < 18:
                        █████░░░░░█████
                          ███████████""" + '\033[39m' + f"""
 
-        Come back in {underage} years and try again!""")
+            Come back in {underage} years and try again!""")
 else:
     print("Let's get started!")
     # Get the spirit category from the first row of the sheet

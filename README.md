@@ -177,7 +177,7 @@
  - [GitHub](https://github.com/patilacerda): Hosting the code.
  - [Heroku](https://www.heroku.com/): Deployment.
  - [Favicon](https://favicon.io/): Generating favicons.
- - [Google Sheets](https://www.google.com/sheets/about/): Hosting the recipes.
+ - [Google Sheets](https://docs.google.com/spreadsheets/d/1dTW-b3tbR5rhwOfA8_TJK_GZLOHFTAiQ5R7j4kqSTic/edit?usp=sharing): Hosting the recipes.
  - [Draw.io](https://www.drawio.com/): Creating flowchart.
  - [gspread](https://docs.gspread.org/en/latest/): Python API for Google Sheets.
  - [google-auth](https://google-auth.readthedocs.io/en/master/): Google authentication library for Python.
